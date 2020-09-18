@@ -1,11 +1,12 @@
 class Cult
-    attr_reader :name, :location, :year, :slogan
+    attr_reader :name, :location, :year, :slogan, :minimum_age
     @@all = []
-    def initialize (name, location, year, slogan)
+    def initialize (name, location, year, slogan, minimum_age=25)
         @name = name
         @location = location
         @year = year
         @slogan = slogan
+        @minimum_age = minimum_age
         self.class.all << self
     end
 
@@ -14,11 +15,15 @@ class Cult
     end
 
     def recruit_follower(follower, date)
-        BloodOath.new(follower, self, date)
+        if follower.age >= self.minimum_age 
+            BloodOath.new(follower, self, date)
+        else
+            "Sorry, #{follower.name}, you are not old enough to join #{self.name}"
+        end
     end
 
     def cult_members
-        BloodOath.all.select {|o| o.cult == self}
+        BloodOath.all.select {|o| o.cult == self}.map {|i| i.follower}
     end
 
     def cult_population
@@ -38,7 +43,7 @@ class Cult
     end
 
     def ages
-        cult_members.map {|o| o.follower.age.to_f}
+        cult_members.map {|o| o.age.to_f}
     end
 
     def average_age
@@ -46,7 +51,7 @@ class Cult
     end
 
     def my_followers_mottos
-        cult_members.map {|o| o.follower.life_motto}.each {|i| puts i}
+        cult_members.map {|o| o.life_motto}.each {|i| puts i}
     end
 
     def self.least_popular

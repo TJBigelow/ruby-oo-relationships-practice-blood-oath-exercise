@@ -17,7 +17,11 @@ class Follower
     end
 
     def join_cult(cult, date)
-        BloodOath.new(self, cult, date)
+        if self.age >= cult.minimum_age
+            BloodOath.new(self, cult, date)
+        else
+            puts "Sorry, #{self.name}, you are not old enough to join #{cult.name}"
+        end
     end
 
     def self.of_a_certain_age(age)
@@ -40,5 +44,11 @@ class Follower
             puts list[i].cults.length
             i += 1
         end
+    end
+
+    def fellow_cult_members
+        fellows = []
+        self.cults.each {|cult| cult.cult_members.each {|member| fellows << member}}
+        fellows.uniq
     end
 end
